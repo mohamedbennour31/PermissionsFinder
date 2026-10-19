@@ -20,11 +20,14 @@ How to Use It
     Launch the App: Open PermissionsFinder on your Android device.
 
 <img src="Screenshots/1.jpg" width="45%" alt="Main Dashboard" />
+
     Review System Posture: Check top-level security indicators, including root status and lock screen security.
 
     Filter Risks: Tap any category in the Security Matrix to filter installed apps by target risk flags.
 
 <img src="Screenshots/2.jpg" width="45%" alt="Categories" />
+
     Inspect & Remediate: Review detected permission risks and follow the provided step-by-step instructions to adjust your Android settings.
+
 <img src="Screenshots/3.jpg" width="45%" />
 <img src="Screenshots/4.jpg" width="45%"  />
