@@ -2,6 +2,8 @@ PermissionsFinder
 
 A privacy and security scanner for Android devices that inspects installed applications and system posture.
 
+Download link:
+
 <p align="center">
   <a href="https://github.com/mohamedbennour31/PermissionsFinder/releases/download/v1.0.0/PermissionsFinder.apk">
     <img src="https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android" alt="Download APK" />
