@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardDroid Security</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .scanner-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:active { opacity: 0.8; }
+        .results-list { margin-top: 20px; text-align: left; }
+        .app-item {
+            background: rgba(255,255,255,0.03);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .risk-high { color: var(--accent-red); font-weight: bold; }
+        .risk-low { color: var(--accent-green); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>GuardDroid Security</h2>
+        <p style="color: var(--text-muted);">Advanced System & Malware Monitor</p>
+    </div>
+
+    <div class="scanner-card">
+        <h3>System Integrity Status</h3>
+        <p id="status-text">Ready to run deep threat analysis.</p>
+        <button id="scan-btn" onclick="runDeepScan()">Start Deep Scan</button>
+    </div>
+
+    <div class="results-list" id="results-container"></div>
+
+    <!-- Import Capacitor Runtime Script -->
+    <script type="module">
+        import { Plugins } from '@capacitor/core';
+        const { SecurityScanner } = Plugins;
+
+        window.runDeepScan = async function() {
+            const statusText = document.getElementById('status-text');
+            const container = document.getElementById('results-container');
+            statusText.innerText = "Scanning installed applications and accessibility hooks...";
+            container.innerHTML = "";
+
+            try {
+                // 1. Scan Installed Apps via Native Plugin
+                const appResult = await SecurityScanner.scanInstalledApps();
+                // 2. Check Keylogger Indicators (Accessibility)
+                const keyloggerResult = await SecurityScanner.checkKeyloggers();
+
+                statusText.innerText = "Scan Complete. Reviewing results below.";
+                
+                let html = `<h4>Installed Apps Audit (${appResult.apps.length} checked)</h4>`;
+                
+                if(keyloggerResult.accessibilityEnabled) {
+                    html += `<div class="app-item" style="border-left: 4px solid var(--accent-red)">
+                        <span>⚠️ Active Accessibility Services Detected</span>
+                        <span class="risk-high">Review</span>
+                    </div>`;
+                }
+
+                appResult.apps.forEach(app => {
+                    html += `
+                        <div class="app-item">
+                            <div>
+                                <strong>${app.name}</strong><br>
+                                <small style="color: var(--text-muted);">${app.packageName}</small>
+                            </div>
+                            <span class="${app.riskScore === 'High' ? 'risk-high' : 'risk-low'}">${app.riskScore} Risk</span>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+            } catch (e) {
+                statusText.innerText = "Scan failed or permissions restricted.";
+                console.error(e);
+            }
+        }
+    </script>
+</body>
+</html>
